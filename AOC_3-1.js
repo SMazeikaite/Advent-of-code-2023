@@ -7,7 +7,6 @@ fs.readFile("AOC_3_input.txt", (err, data) => {
     const schema = data.toString().split('\r\n');
     const indices = [];
     let sumResult = 0;
-    let log = '';
     let schemmaArray = [];
 
     schema.forEach((schemaLine, schemaLineIndex) => {
@@ -37,7 +36,6 @@ fs.readFile("AOC_3_input.txt", (err, data) => {
             // CHECK NUMBERS
             if (isNumber) {     
                 if (boundaries.top) {
-                    // log += `\n TOP \n`;
                     const topSpot = schemmaArray[schemaLineIndex-1][charIndex];
                     const topLeftSpot = schemmaArray[schemaLineIndex-1][charIndex-1];
                     const topRightSpot = schemmaArray[schemaLineIndex-1][charIndex+1];
@@ -50,7 +48,6 @@ fs.readFile("AOC_3_input.txt", (err, data) => {
                     const leftSpot = schemmaArray[schemaLineIndex][charIndex - 1];
                     const includes = specialChar.includes(leftSpot)
                     if (includes) {
-                        log += ` LEFT: ${leftSpot} `;  
                         indices.push(`${schemaLineIndex}:${charIndex}`);
                     }
                 }
@@ -58,7 +55,6 @@ fs.readFile("AOC_3_input.txt", (err, data) => {
                     const rightSpot = schemmaArray[schemaLineIndex][charIndex + 1];
                     const includes = specialChar.includes(rightSpot)
                     if (includes) {
-                        log += ` RIGHT: ${rightSpot} `;
                         indices.push(`${schemaLineIndex}:${charIndex}`);
                     }
                 }
@@ -81,38 +77,29 @@ fs.readFile("AOC_3_input.txt", (err, data) => {
 
     numbers.forEach(num => {
         sumResult += num.number;
-    })
-
-    console.log('numbers:', numbers);
-    console.log('sum result:', sumResult);
-
-    fs.writeFile("AOC_3_result.txt", log, (err) => {
-        if (err) throw err;
-        console.log("The file was succesfully saved!");
     });
-
-
-    function isNumeric(s) {
-        return !isNaN(s - parseFloat(s));
-    }
-
-    function findNumberAndPosition(numIndex, schemaList) {
-        const [rowId, columnStr] = numIndex.split(':');
-        const columnId = parseInt(columnStr);
-        const row = schemaList[rowId];
-
-        let start = columnId;
-        let end = columnId;
-
-        while (start > 0 && /\d/.test(row[start - 1])) start--;
-        while (end < row.length && /\d/.test(row[end])) end++;
-
-        const numberStr = row.substring(start, end);
-
-        return [...numberStr.matchAll(/\d+/g)].map(match => ({
-            number: Number(match[0]),
-            row: Number(rowId),
-            position: start + match.index
-        }));
-    }
 });
+
+function isNumeric(s) {
+    return !isNaN(s - parseFloat(s));
+}
+
+function findNumberAndPosition(numIndex, schemaList) {
+    const [rowId, columnStr] = numIndex.split(':');
+    const columnId = parseInt(columnStr);
+    const row = schemaList[rowId];
+
+    let start = columnId;
+    let end = columnId;
+
+    while (start > 0 && /\d/.test(row[start - 1])) start--;
+    while (end < row.length && /\d/.test(row[end])) end++;
+
+    const numberStr = row.substring(start, end);
+
+    return [...numberStr.matchAll(/\d+/g)].map(match => ({
+        number: Number(match[0]),
+        row: Number(rowId),
+        position: start + match.index
+    }));
+}
